@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Map of Finland</title>
+    <link rel="stylesheet" href="style.css">
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+</head>
+<body>
+
+    <h1>Weather Map of Finland</h1>
+
+    <input type="text" id="locationInput" placeholder="Enter a place name in Finland">
+    <button onclick="searchLocation()">Search</button>
+    <p id="coordinates">Click on the map to select a location.</p>
+    
+    <div class="container">
+        <div id="map"></div>
+        <div class="info-box">
+            <h2 id="location-title">Select a Location</h2>
+            <div class="weather-grid">
+                <div class="weather-item">
+                    <div class="weather-box">°C</div>
+                    <div class="weather-details">Precip: <span class="precip">-</span> mm<br>Pressure: <span class="pressure">-</span> hPa</div>
+                </div>
+                <div class="weather-item">
+                    <div class="weather-box">°C</div>
+                    <div class="weather-details">Precip: <span class="precip">-</span> mm<br>Pressure: <span class="pressure">-</span> hPa</div>
+                </div>
+                <div class="weather-item">
+                    <div class="weather-box">°C</div>
+                    <div class="weather-details">Precip: <span class="precip">-</span> mm<br>Pressure: <span class="pressure">-</span> hPa</div>
+                </div>
+                <div class="weather-item">
+                    <div class="weather-box">°C</div>
+                    <div class="weather-details">Precip: <span class="precip">-</span> mm<br>Pressure: <span class="pressure">-</span> hPa</div>
+                </div>
+                <div class="weather-item">
+                    <div class="weather-box">°C</div>
+                    <div class="weather-details">Precip: <span class="precip">-</span> mm<br>Pressure: <span class="pressure">-</span> hPa</div>
+                </div>
+                <div class="weather-item">
+                    <div class="weather-box">°C</div>
+                    <div class="weather-details">Precip: <span class="precip">-</span> mm<br>Pressure: <span class="pressure">-</span> hPa</div>
+                </div>
+                <div class="weather-item">
+                    <div class="weather-box">°C</div>
+                    <div class="weather-details">Precip: <span class="precip">-</span> mm<br>Pressure: <span class="pressure">-</span> hPa</div>
+                </div>
+                <div class="weather-item">
+                    <div class="weather-box">°C</div>
+                    <div class="weather-details">Precip: <span class="precip">-</span> mm<br>Pressure: <span class="pressure">-</span> hPa</div>
+                </div>
+                <div class="weather-item">
+                    <div class="weather-box">°C</div>
+                    <div class="weather-details">Precip: <span class="precip">-</span> mm<br>Pressure: <span class="pressure">-</span> hPa</div>
+                </div>
+                <div class="weather-item">
+                    <div class="weather-box">°C</div>
+                    <div class="weather-details">Precip: <span class="precip">-</span> mm<br>Pressure: <span class="pressure">-</span> hPa</div>
+                </div>
+                <div class="weather-item">
+                    <div class="weather-box">°C</div>
+                    <div class="weather-details">Precip: <span class="precip">-</span> mm<br>Pressure: <span class="pressure">-</span> hPa</div>
+                </div>
+                <div class="weather-item">
+                    <div class="weather-box">°C</div>
+                    <div class="weather-details">Precip: <span class="precip">-</span> mm<br>Pressure: <span class="pressure">-</span> hPa</div>
+                </div>
+                <div class="weather-item">
+                    <div class="weather-box">°C</div>
+                    <div class="weather-details">Precip: <span class="precip">-</span> mm<br>Pressure: <span class="pressure">-</span> hPa</div>
+                </div>
+                <div class="weather-item">
+                    <div class="weather-box">°C</div>
+                    <div class="weather-details">Precip: <span class="precip">-</span> mm<br>Pressure: <span class="pressure">-</span> hPa</div>
+                </div>
+                <div class="weather-item">
+                    <div class="weather-box">°C</div>
+                    <div class="weather-details">Precip: <span class="precip">-</span> mm<br>Pressure: <span class="pressure">-</span> hPa</div>
+                </div>
+                <div class="weather-item">
+                    <div class="weather-box">°C</div>
+                    <div class="weather-details">Precip: <span class="precip">-</span> mm<br>Pressure: <span class="pressure">-</span> hPa</div>
+                </div>
+                <div class="weather-item">
+                    <div class="weather-box">°C</div>
+                    <div class="weather-details">Precip: <span class="precip">-</span> mm<br>Pressure: <span class="pressure">-</span> hPa</div>
+                </div>
+                <div class="weather-item">
+                    <div class="weather-box">°C</div>
+                    <div class="weather-details">Precip: <span class="precip">-</span> mm<br>Pressure: <span class="pressure">-</span> hPa</div>
+                </div>
+                <div class="weather-item">
+                    <div class="weather-box">°C</div>
+                    <div class="weather-details">Precip: <span class="precip">-</span> mm<br>Pressure: <span class="pressure">-</span> hPa</div>
+                </div>
+                <div class="weather-item">
+                    <div class="weather-box">°C</div>
+                    <div class="weather-details">Precip: <span class="precip">-</span> mm<br>Pressure: <span class="pressure">-</span> hPa</div>
+                </div>
+                <div class="weather-item">
+                    <div class="weather-box">°C</div>
+                    <div class="weather-details">Precip: <span class="precip">-</span> mm<br>Pressure: <span class="pressure">-</span> hPa</div>
+                </div>
+                <div class="weather-item">
+                    <div class="weather-box">°C</div>
+                    <div class="weather-details">Precip: <span class="precip">-</span> mm<br>Pressure: <span class="pressure">-</span> hPa</div>
+                </div>
+                <div class="weather-item">
+                    <div class="weather-box">°C</div>
+                    <div class="weather-details">Precip: <span class="precip">-</span> mm<br>Pressure: <span class="pressure">-</span> hPa</div>
+                </div>
+                <div class="weather-item">
+                    <div class="weather-box">°C</div>
+                    <div class="weather-details">Precip: <span class="precip">-</span> mm<br>Pressure: <span class="pressure">-</span> hPa</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="script.js"></script>
+
+</body>
+</html>
