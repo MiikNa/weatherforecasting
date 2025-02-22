@@ -1,0 +1,5 @@
+Flask
+requests
+tensorflow
+numpy
+python-dotenv
