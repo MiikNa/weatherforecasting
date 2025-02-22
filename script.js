@@ -9,33 +9,27 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 let selectedLat = null;
 let selectedLng = null;
 
-map.on('click', function (e) {
-    selectedLat = e.latlng.lat.toFixed(4);
-    selectedLng = e.latlng.lng.toFixed(4);
-
-    map.eachLayer(function (layer) {
-        if (layer instanceof L.Marker) {
-            map.removeLayer(layer);
-        }
+function sendCoordinates(lat, lon) {
+    return fetch('http://127.0.0.1:5000/process-coordinates', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ lat: Number(lat), lon: Number(lon) })
+        
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Backend Response:', data);
+        return data;
+    })
+    .catch(error => {
+        console.error('Error sending coordinates:', error);
+        throw error;
     });
+}
 
-    var marker = L.marker([selectedLat, selectedLng]).addTo(map)
-        .bindPopup(`📍 Selected Location:<br>Lat: ${selectedLat}<br>Lng: ${selectedLng}`)
-        .openPopup();
-
-    document.getElementById("coordinates").innerHTML = 
-        `📍 Selected Location: <strong>Lat:</strong> ${selectedLat}, <strong>Lng:</strong> ${selectedLng}`;
-
-    getWeatherPrediction(null, selectedLat, selectedLng);
-});
-
-function searchLocation() {
-    var place = document.getElementById("locationInput").value.trim();
-    if (place === "") {
-        alert("Please enter a place name.");
-        return;
-    }
-
+function searchLocation(place) {
     var url = `https://nominatim.openstreetmap.org/search?format=json&q=${place}`;
 
     fetch(url)
@@ -64,9 +58,46 @@ function searchLocation() {
             document.getElementById("coordinates").innerHTML =
                 `📍 Selected Location: <strong>${place}</strong> (<strong>Lat:</strong> ${selectedLat.toFixed(4)}, <strong>Lng:</strong> ${selectedLng.toFixed(4)})`;
 
+            sendCoordinates(selectedLat, selectedLng);
             getWeatherPrediction(place, null, null);
         })
         .catch(error => console.log("Error fetching location:", error));
+}
+
+map.on('click', function (e) {
+    selectedLat = Number(e.latlng.lat.toFixed(4));
+    selectedLng = Number(e.latlng.lng.toFixed(4));
+
+
+    map.eachLayer(function (layer) {
+        if (layer instanceof L.Marker) {
+            map.removeLayer(layer);
+        }
+    });
+
+    var marker = L.marker([selectedLat, selectedLng]).addTo(map);
+    marker.bindPopup(`
+        <div>
+            📍 Selected Location:<br>
+            Lat: ${selectedLat}<br>
+            Lng: ${selectedLng}<br>
+            <button onclick="handleSelect(${selectedLat}, ${selectedLng})" class="select-button">Select</button>
+        </div>
+    `).openPopup();
+
+    document.getElementById("coordinates").innerHTML = 
+        `📍 Selected Location: <strong>Lat:</strong> ${selectedLat}, <strong>Lng:</strong> ${selectedLng}`;
+});
+
+function handleSelect(lat, lng) {
+    document.getElementById("location-title").textContent = 
+        `Selected Location: ${lat},${lng}`;
+    
+    sendCoordinates(lat, lng)
+        .then(() => {
+            getWeatherPrediction(null, lat, lng);
+        })
+        .catch(error => console.error('Error:', error));
 }
 
 function getWeatherPrediction(city, lat, lon) {
@@ -91,10 +122,3 @@ function getWeatherPrediction(city, lat, lon) {
         })
         .catch(error => console.error("Error fetching prediction:", error));
 }
-
-document.getElementById("locationInput").addEventListener("keypress", function (event) {
-    if (event.key === "Enter") {
-        event.preventDefault();
-        searchLocation();
-    }
-});
