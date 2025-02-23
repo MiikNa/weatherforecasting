@@ -16,11 +16,21 @@ function sendCoordinates(lat, lon) {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({ lat: Number(lat), lon: Number(lon) })
-        
     })
     .then(response => response.json())
     .then(data => {
         console.log('Backend Response:', data);
+
+        const weatherItems = document.querySelectorAll(".weather-item");
+
+        data.prediction.forEach((hourData, index) => {
+            if (weatherItems[index]) {
+                weatherItems[index].querySelector(".weather-box").textContent = `${hourData.temperature}°C`;
+                weatherItems[index].querySelector(".precip").textContent = `${hourData.precipitation}`;
+                weatherItems[index].querySelector(".pressure").textContent = `${hourData.pressure}`;
+            }
+        });
+
         return data;
     })
     .catch(error => {

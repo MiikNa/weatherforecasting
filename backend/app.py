@@ -5,9 +5,12 @@ import pandas as pd
 import numpy as np
 import joblib
 from flask_cors import CORS
+import tensorflow as tf
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
+
+model = tf.keras.models.load_model("your_model.h5")
 
 lat = 65.0
 lon = 26.0
@@ -62,12 +65,24 @@ def process_coordinates():
 
     df = apply_scaling(df)
 
-    print(df)
+    prediction = model.predict(df[:24])
+
+    prediction_list = []
+    for i in range(24):
+        prediction_list.append({
+            "hour": i,
+            "temperature": round(prediction[i][0], 1),
+            "precipitation": round(prediction[i][1], 1),
+            "pressure": round(prediction[i][2], 1)
+        })
+
+    print("Model Prediction:", prediction_list)
 
     return jsonify({
         "message": "Coordinates received and processed",
         "lat": lat,
-        "lon": lon
+        "lon": lon,
+        "prediction": prediction_list
     })
 
 def apply_scaling(new_data):
@@ -88,6 +103,10 @@ def apply_scaling(new_data):
         new_data[existing_standard] = scaler_standard.transform(new_data[existing_standard])
 
     return new_data
+
+
+
+
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
