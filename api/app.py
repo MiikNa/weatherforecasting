@@ -19,7 +19,7 @@ SCALER_STANDARD_PATH = os.path.join(BASE_DIR, "api", "scaler_standard.pkl")
 SCALER_COORDINATES_PATH = os.path.join(BASE_DIR, "api", "scaler_coordinates.pkl")
 
 model = tf.keras.models.load_model(MODEL_PATH)
-model = tf.keras.models.load_model("./api/hybrid_weather_model.h5")
+model = tf.keras.models.load_model("hybrid_weather_model.h5")
 
 lat = 65.0
 lon = 26.0
@@ -29,8 +29,8 @@ yesterday = (now - timedelta(hours=24)).strftime("%Y-%m-%d")
 week = (now - timedelta(hours=72)).strftime("%Y-%m-%d")
 
 def inverse_scaling(predictions):
-    scaler_minmax = joblib.load("./api/scaler_minmax.pkl")
-    scaler_standard = joblib.load("./api/scaler_standard.pkl")
+    scaler_minmax = joblib.load("scaler_minmax.pkl")
+    scaler_standard = joblib.load("scaler_standard.pkl")
     
     pred_df = pd.DataFrame(predictions, columns=[
         'temperature_2m_next',
@@ -91,7 +91,7 @@ def process_coordinates():
         print("Failed to fetch weather data")
         return jsonify({"error": "Weather data fetch failed"}), 500
 
-    min_lat, max_lat, min_lon, max_lon = joblib.load("./api/scaler_coordinates.pkl")
+    min_lat, max_lat, min_lon, max_lon = joblib.load("scaler_coordinates.pkl")
     lat_scaled = (lat - min_lat) / (max_lat - min_lat)
     lon_scaled = (lon - min_lon) / (max_lon - min_lon)
     
@@ -169,8 +169,8 @@ def process_coordinates():
     })
 
 def apply_scaling(new_data):
-    scaler_minmax = joblib.load("./api/scaler_minmax.pkl")
-    scaler_standard = joblib.load("./api/scaler_standard.pkl")
+    scaler_minmax = joblib.load("scaler_minmax.pkl")
+    scaler_standard = joblib.load("scaler_standard.pkl")
 
     minmax_features = ["relative_humidity_2m", "cloud_cover",
                        "wind_direction_10m","relative_humidity_2m_next"]
