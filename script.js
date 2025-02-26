@@ -10,7 +10,7 @@ let selectedLat = null;
 let selectedLng = null;
 
 function sendCoordinates(lat, lon) {
-    return fetch('weatherforecasting-flax.vercel.app/process-coordinates', {
+    return fetch('https://weatherforecasting-flax.vercel.app/process-coordinates', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -130,6 +130,9 @@ map.on('click', function (e) {
 
 function handleSelect(lat, lng) {
     sendCoordinates(lat, lng)
+        .then(() => {
+            map.closePopup();
+        })
         .catch(error => console.error('Error:', error));
 }
 
