@@ -10,7 +10,7 @@ let selectedLat = null;
 let selectedLng = null;
 
 function sendCoordinates(lat, lon) {
-    return fetch('http://127.0.0.1:5000/process-coordinates', {
+    return fetch('weatherforecasting-flax.vercel.app/process-coordinates', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
