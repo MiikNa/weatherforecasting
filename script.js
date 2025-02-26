@@ -20,23 +20,61 @@ function sendCoordinates(lat, lon) {
     .then(response => response.json())
     .then(data => {
         console.log('Backend Response:', data);
-
-        const weatherItems = document.querySelectorAll(".weather-item");
-
-        data.prediction.forEach((hourData, index) => {
-            if (weatherItems[index]) {
-                weatherItems[index].querySelector(".weather-box").textContent = `${hourData.temperature}°C`;
-                weatherItems[index].querySelector(".precip").textContent = `${hourData.precipitation}`;
-                weatherItems[index].querySelector(".pressure").textContent = `${hourData.pressure}`;
-            }
-        });
-
+        displayWeatherData(data.prediction || data);
         return data;
     })
     .catch(error => {
         console.error('Error sending coordinates:', error);
         throw error;
     });
+}
+
+function displayWeatherData(predictionData) {
+    const weatherItems = document.querySelectorAll(".weather-item");
+    if (Array.isArray(predictionData)) {
+        predictionData.forEach((hourData, index) => {
+            if (index < weatherItems.length) {
+                function formatHour(hour) {
+                    return `${hour.toString().padStart(2, '0')}:00`;
+                }
+                weatherItems[index].querySelector(".weather-time").textContent = `
+                ${formatHour(hourData.hour)}`;
+                weatherItems[index].querySelector(".weather-box").innerHTML = `
+                <div class="weather-top">
+                    <span class="temp">${hourData.temperature_2m_next.toFixed(1)}°C</span>
+                </div>
+                <div class="weather-bottom">
+                    <div class="grid-cell">
+                        <i class="fa-solid fa-cloud-rain"></i> ${hourData.precipitation_next.toFixed(1)} mm
+                    </div>
+                    <div class="grid-cell">
+                        <i class="fas fa-droplet"></i> ${hourData.relative_humidity_2m_next.toFixed(1)}%
+                    </div>
+                    <div class="grid-cell">
+                        <i class="fas fa-wind"></i> ${hourData.wind_speed_10m_next.toFixed(1)} m/s
+                    </div>
+                    <div class="grid-cell">
+                        <i class="fas fa-snowflake"></i> ${hourData.snowfall_next.toFixed(1)} cm
+                    </div>
+                </div>
+                `;
+                const detailsDiv = weatherItems[index].querySelector(".weather-details");
+                detailsDiv.innerHTML = ``;
+                
+                if (hourData.snowfall_next > 0) {
+                    detailsDiv.innerHTML += `<br>Snow: ${hourData.snowfall_next.toFixed(1)} cm`;
+                }
+            }
+        });
+    }
+    
+    const now = new Date();
+    const tomorrow = new Date(now);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    
+    document.getElementById("location-title").textContent = `
+        ${now.toLocaleDateString('fi-FI')}\n
+    `;
 }
 
 function searchLocation(place) {
@@ -64,12 +102,7 @@ function searchLocation(place) {
             var marker = L.marker([selectedLat, selectedLng]).addTo(map)
                 .bindPopup(`📍 ${place}<br>Lat: ${selectedLat.toFixed(4)}, Lng: ${selectedLng.toFixed(4)}`)
                 .openPopup();
-
-            document.getElementById("coordinates").innerHTML =
-                `📍 Selected Location: <strong>${place}</strong> (<strong>Lat:</strong> ${selectedLat.toFixed(4)}, <strong>Lng:</strong> ${selectedLng.toFixed(4)})`;
-
             sendCoordinates(selectedLat, selectedLng);
-            getWeatherPrediction(place, null, null);
         })
         .catch(error => console.log("Error fetching location:", error));
 }
@@ -77,7 +110,6 @@ function searchLocation(place) {
 map.on('click', function (e) {
     selectedLat = Number(e.latlng.lat.toFixed(4));
     selectedLng = Number(e.latlng.lng.toFixed(4));
-
 
     map.eachLayer(function (layer) {
         if (layer instanceof L.Marker) {
@@ -94,41 +126,24 @@ map.on('click', function (e) {
             <button onclick="handleSelect(${selectedLat}, ${selectedLng})" class="select-button">Select</button>
         </div>
     `).openPopup();
-
-    document.getElementById("coordinates").innerHTML = 
-        `📍 Selected Location: <strong>Lat:</strong> ${selectedLat}, <strong>Lng:</strong> ${selectedLng}`;
 });
 
 function handleSelect(lat, lng) {
-    document.getElementById("location-title").textContent = 
-        `Selected Location: ${lat},${lng}`;
-    
     sendCoordinates(lat, lng)
-        .then(() => {
-            getWeatherPrediction(null, lat, lng);
-        })
         .catch(error => console.error('Error:', error));
 }
 
-function getWeatherPrediction(city, lat, lon) {
-    let url = "https://your-api.onrender.com/predict?";
-
-    if (city) {
-        url += `city=${encodeURIComponent(city)}`;
-    } else if (lat && lon) {
-        url += `lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}`;
-    } else {
-        return;
-    }
-
-    fetch(url)
-        .then(response => response.json())
-        .then(data => {
-            if (data.error) {
-                alert(data.error);
-            } else {
-                alert(`Prediction: ${data.prediction}`);
-            }
-        })
-        .catch(error => console.error("Error fetching prediction:", error));
+function loadTestData() {
+    const data = [
+    ];
+    displayWeatherData(data);
 }
+
+window.addEventListener('DOMContentLoaded', function() {
+    sendCoordinates(60.1729, 24.941);
+});
+window.addEventListener("load", function() {
+    setTimeout(function() {
+        map.invalidateSize();
+    }, 300);
+});
