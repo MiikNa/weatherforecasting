@@ -7,13 +7,11 @@ import pandas as pd
 import tensorflow as tf
 from datetime import datetime, timedelta
 
-# Load ML model and scalers on each request
 model = tf.keras.models.load_model("./api/hybrid_weather_model.h5")
 scaler_minmax = joblib.load("./api/scaler_minmax.pkl")
 scaler_standard = joblib.load("./api/scaler_standard.pkl")
 min_lat, max_lat, min_lon, max_lon = joblib.load("./api/scaler_coordinates.pkl")
 
-# Function to process coordinates and make predictions
 def process_weather(lat, lon):
     now = datetime.now()
     yesterday = (now - timedelta(hours=24)).strftime("%Y-%m-%d")
