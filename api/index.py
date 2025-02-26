@@ -6,10 +6,19 @@ import numpy as np
 import joblib
 from flask_cors import CORS
 import tensorflow as tf
+import os
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
 
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+MODEL_PATH = os.path.join(BASE_DIR, "api", "hybrid_weather_model.h5")
+SCALER_MINMAX_PATH = os.path.join(BASE_DIR, "api", "scaler_minmax.pkl")
+SCALER_STANDARD_PATH = os.path.join(BASE_DIR, "api", "scaler_standard.pkl")
+SCALER_COORDINATES_PATH = os.path.join(BASE_DIR, "api", "scaler_coordinates.pkl")
+
+model = tf.keras.models.load_model(MODEL_PATH)
 model = tf.keras.models.load_model("./api/hybrid_weather_model.h5")
 
 lat = 65.0
@@ -204,5 +213,6 @@ def create_input_sequences_for_prediction(df, seq_length=24):
     return X_weather, X_geo, X_time
 
 
-if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
