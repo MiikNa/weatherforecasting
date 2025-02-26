@@ -6,6 +6,7 @@ import numpy as np
 import joblib
 from flask_cors import CORS
 import tensorflow as tf
+from tensorflow.keras.layers import LSTM
 import os
 
 app = Flask(__name__)
@@ -18,7 +19,17 @@ SCALER_MINMAX_PATH = os.path.join(BASE_DIR, "api", "scaler_minmax.pkl")
 SCALER_STANDARD_PATH = os.path.join(BASE_DIR, "api", "scaler_standard.pkl")
 SCALER_COORDINATES_PATH = os.path.join(BASE_DIR, "api", "scaler_coordinates.pkl")
 
-model = tf.keras.models.load_model("hybrid_weather_model.h5")
+# Debug path information
+print(f"Current directory: {os.getcwd()}")
+print(f"BASE_DIR: {BASE_DIR}")
+print(f"Looking for model at: {MODEL_PATH}")
+print(f"Model file exists: {os.path.exists(MODEL_PATH)}")
+
+# Load model with custom objects to handle LSTM
+model = tf.keras.models.load_model(
+    MODEL_PATH,
+    custom_objects={"LSTM": tf.keras.layers.LSTM}
+)
 
 lat = 65.0
 lon = 26.0
@@ -28,8 +39,8 @@ yesterday = (now - timedelta(hours=24)).strftime("%Y-%m-%d")
 week = (now - timedelta(hours=72)).strftime("%Y-%m-%d")
 
 def inverse_scaling(predictions):
-    scaler_minmax = joblib.load("scaler_minmax.pkl")
-    scaler_standard = joblib.load("scaler_standard.pkl")
+    scaler_minmax = joblib.load(SCALER_MINMAX_PATH)
+    scaler_standard = joblib.load(SCALER_STANDARD_PATH)
     
     pred_df = pd.DataFrame(predictions, columns=[
         'temperature_2m_next',
@@ -90,7 +101,7 @@ def process_coordinates():
         print("Failed to fetch weather data")
         return jsonify({"error": "Weather data fetch failed"}), 500
 
-    min_lat, max_lat, min_lon, max_lon = joblib.load("scaler_coordinates.pkl")
+    min_lat, max_lat, min_lon, max_lon = joblib.load(SCALER_COORDINATES_PATH)
     lat_scaled = (lat - min_lat) / (max_lat - min_lat)
     lon_scaled = (lon - min_lon) / (max_lon - min_lon)
     
@@ -168,8 +179,8 @@ def process_coordinates():
     })
 
 def apply_scaling(new_data):
-    scaler_minmax = joblib.load("scaler_minmax.pkl")
-    scaler_standard = joblib.load("scaler_standard.pkl")
+    scaler_minmax = joblib.load(SCALER_MINMAX_PATH)
+    scaler_standard = joblib.load(SCALER_STANDARD_PATH)
 
     minmax_features = ["relative_humidity_2m", "cloud_cover",
                        "wind_direction_10m","relative_humidity_2m_next"]
