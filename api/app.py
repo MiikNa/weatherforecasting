@@ -18,7 +18,6 @@ SCALER_MINMAX_PATH = os.path.join(BASE_DIR, "api", "scaler_minmax.pkl")
 SCALER_STANDARD_PATH = os.path.join(BASE_DIR, "api", "scaler_standard.pkl")
 SCALER_COORDINATES_PATH = os.path.join(BASE_DIR, "api", "scaler_coordinates.pkl")
 
-model = tf.keras.models.load_model(MODEL_PATH)
 model = tf.keras.models.load_model("hybrid_weather_model.h5")
 
 lat = 65.0
