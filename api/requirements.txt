@@ -1,8 +1,9 @@
-flask
-flask-cors
-requests
-pandas
-numpy
-joblib
-tensorflow
-gunicorn
+flask==3.1.0
+flask-cors==5.0.0
+requests==3.10
+pandas==2.1.4
+numpy==1.24.4
+joblib==1.2.0
+tensorflow==2.10.1
+gunicorn==20.1.0
+python-dotenv==1.0.1
