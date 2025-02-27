@@ -1,6 +1,6 @@
 flask==3.1.0
 flask-cors==5.0.0
-requests==3.10
+requests
 pandas==2.1.4
 numpy==1.24.4
 joblib==1.2.0
