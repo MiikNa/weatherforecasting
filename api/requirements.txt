@@ -3,7 +3,7 @@ flask-cors==5.0.0
 requests
 pandas==2.1.4
 numpy==1.24.4
-joblib==1.2.0
+joblib
 tensorflow==2.10.1
 gunicorn==20.1.0
 python-dotenv==1.0.1
