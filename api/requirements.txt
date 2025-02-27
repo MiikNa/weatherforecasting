@@ -1,3 +1,4 @@
+python-3.9.21
 flask
 flask-cors
 requests
