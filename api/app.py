@@ -20,7 +20,6 @@ SCALER_MINMAX_PATH = os.path.join(BASE_DIR,"scaler_minmax.pkl")
 SCALER_STANDARD_PATH = os.path.join(BASE_DIR,"scaler_standard.pkl")
 SCALER_COORDINATES_PATH = os.path.join(BASE_DIR,"scaler_coordinates.pkl")
 
-# Debug path information
 print(f"Current directory: {os.getcwd()}")
 print(f"BASE_DIR: {BASE_DIR}")
 print(f"Looking for model at: {MODEL_PATH}")
@@ -30,9 +29,14 @@ class CustomLSTM(tf.keras.layers.LSTM):
     def __init__(self, *args, time_major=None, **kwargs):
         super().__init__(*args, **kwargs)
 
+custom_objects = {
+    "LSTM": tf.keras.layers.LSTM,
+    "mse": tf.keras.losses.MeanSquaredError()
+}
+
 model = tf.keras.models.load_model(
     MODEL_PATH,
-    custom_objects={"LSTM": CustomLSTM}
+    custom_objects=custom_objects
 )
 
 lat = 65.0
