@@ -14,10 +14,10 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-MODEL_PATH = os.path.join(BASE_DIR, "api", "hybrid_weather_model.h5")
-SCALER_MINMAX_PATH = os.path.join(BASE_DIR, "api", "scaler_minmax.pkl")
-SCALER_STANDARD_PATH = os.path.join(BASE_DIR, "api", "scaler_standard.pkl")
-SCALER_COORDINATES_PATH = os.path.join(BASE_DIR, "api", "scaler_coordinates.pkl")
+MODEL_PATH = os.path.join("hybrid_weather_model.h5")
+SCALER_MINMAX_PATH = os.path.join("scaler_minmax.pkl")
+SCALER_STANDARD_PATH = os.path.join("scaler_standard.pkl")
+SCALER_COORDINATES_PATH = os.path.join("scaler_coordinates.pkl")
 
 # Debug path information
 print(f"Current directory: {os.getcwd()}")
