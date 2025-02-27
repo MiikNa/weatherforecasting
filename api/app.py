@@ -9,6 +9,7 @@ import tensorflow as tf
 from tensorflow.keras.layers import LSTM
 import os
 
+PORT = 5000
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
 
@@ -224,5 +225,4 @@ def create_input_sequences_for_prediction(df, seq_length=24):
 
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port)
+    app.run(host="0.0.0.0", PORT=PORT)
