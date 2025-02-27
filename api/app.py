@@ -9,16 +9,16 @@ import tensorflow as tf
 from tensorflow.keras.layers import LSTM
 import os
 
-PORT = 5000
+
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
 
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-MODEL_PATH = os.path.join("hybrid_weather_model.h5")
-SCALER_MINMAX_PATH = os.path.join("scaler_minmax.pkl")
-SCALER_STANDARD_PATH = os.path.join("scaler_standard.pkl")
-SCALER_COORDINATES_PATH = os.path.join("scaler_coordinates.pkl")
+MODEL_PATH = os.path.join(BASE_DIR, "hybrid_weather_model.h5")
+SCALER_MINMAX_PATH = os.path.join(BASE_DIR,"scaler_minmax.pkl")
+SCALER_STANDARD_PATH = os.path.join(BASE_DIR,"scaler_standard.pkl")
+SCALER_COORDINATES_PATH = os.path.join(BASE_DIR,"scaler_coordinates.pkl")
 
 # Debug path information
 print(f"Current directory: {os.getcwd()}")
@@ -26,10 +26,13 @@ print(f"BASE_DIR: {BASE_DIR}")
 print(f"Looking for model at: {MODEL_PATH}")
 print(f"Model file exists: {os.path.exists(MODEL_PATH)}")
 
-# Load model with custom objects to handle LSTM
+class CustomLSTM(tf.keras.layers.LSTM):
+    def __init__(self, *args, time_major=None, **kwargs):
+        super().__init__(*args, **kwargs)
+
 model = tf.keras.models.load_model(
     MODEL_PATH,
-    custom_objects={"LSTM": tf.keras.layers.LSTM}
+    custom_objects={"LSTM": CustomLSTM}
 )
 
 lat = 65.0
@@ -225,4 +228,5 @@ def create_input_sequences_for_prediction(df, seq_length=24):
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", PORT=PORT)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
