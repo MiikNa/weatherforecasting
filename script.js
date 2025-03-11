@@ -70,10 +70,10 @@ function displayWeatherData(predictionData) {
     
     const now = new Date();
     const tomorrow = new Date(now);
-    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setDate(now.getDate());
     
     document.getElementById("location-title").textContent = `
-        ${now.toLocaleDateString('fi-FI')}\n
+        ${tomorrow.toLocaleDateString('fi-FI')}\n
     `;
 }
 

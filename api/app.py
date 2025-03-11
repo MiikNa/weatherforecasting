@@ -43,8 +43,8 @@ lat = 65.0
 lon = 26.0
 
 now = datetime.now()
-today = now.strftime("%Y-%m-%d")
-forecast_end = (now + timedelta(days=5)).strftime("%Y-%m-%d")
+yesterday = (now - timedelta(days=0)).strftime("%Y-%m-%d")
+days_before = (now - timedelta(days=4)).strftime("%Y-%m-%d")
 
 def inverse_scaling(predictions):
     scaler_minmax = joblib.load(SCALER_MINMAX_PATH)
@@ -98,7 +98,7 @@ def process_coordinates():
     lon = float(data['lon'])
     print(f"Updated coordinates: lat={lat}, lon={lon}")
 
-    url = f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&start_date={today}&end_date={forecast_end}&current=temperature_2m,wind_speed_10m&hourly=temperature_2m,relative_humidity_2m,precipitation,snowfall,snow_depth,pressure_msl,cloud_cover,wind_speed_10m,wind_direction_10m&wind_speed_unit=ms"
+    url = f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&start_date={days_before}&end_date={yesterday}&current=temperature_2m,wind_speed_10m&hourly=temperature_2m,relative_humidity_2m,precipitation,snowfall,snow_depth,pressure_msl,cloud_cover,wind_speed_10m,wind_direction_10m&wind_speed_unit=ms"
     
     response = requests.get(url)
     if response.status_code == 200:
