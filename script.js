@@ -10,7 +10,7 @@ let selectedLat = null;
 let selectedLng = null;
 
 function sendCoordinates(lat, lon) {
-    return fetch('https://weatherforecasting-flax.vercel.app/process-coordinates', {
+    return fetch('http://localhost:5000/process-coordinates', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -148,5 +148,5 @@ window.addEventListener('DOMContentLoaded', function() {
 window.addEventListener("load", function() {
     setTimeout(function() {
         map.invalidateSize();
-    }, 300);
+    }, 1000);
 });

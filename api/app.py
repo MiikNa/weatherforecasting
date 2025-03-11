@@ -6,7 +6,7 @@ import numpy as np
 import joblib
 from flask_cors import CORS
 import tensorflow as tf
-from tensorflow.keras.layers import LSTM
+from tensorflow.keras import backend as K
 import os
 
 
@@ -15,7 +15,7 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-MODEL_PATH = os.path.join(BASE_DIR, "hybrid_weather_model.h5")
+MODEL_PATH = os.path.join(BASE_DIR, "256bIMPROVBiLSTMAttentionBEST.h5")
 SCALER_MINMAX_PATH = os.path.join(BASE_DIR,"scaler_minmax.pkl")
 SCALER_STANDARD_PATH = os.path.join(BASE_DIR,"scaler_standard.pkl")
 SCALER_COORDINATES_PATH = os.path.join(BASE_DIR,"scaler_coordinates.pkl")
@@ -43,8 +43,8 @@ lat = 65.0
 lon = 26.0
 
 now = datetime.now()
-yesterday = (now - timedelta(hours=24)).strftime("%Y-%m-%d")
-week = (now - timedelta(hours=72)).strftime("%Y-%m-%d")
+today = now.strftime("%Y-%m-%d")
+forecast_end = (now + timedelta(days=5)).strftime("%Y-%m-%d")
 
 def inverse_scaling(predictions):
     scaler_minmax = joblib.load(SCALER_MINMAX_PATH)
@@ -98,7 +98,7 @@ def process_coordinates():
     lon = float(data['lon'])
     print(f"Updated coordinates: lat={lat}, lon={lon}")
 
-    url = f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&start_date={week}&end_date={yesterday}&current=temperature_2m,wind_speed_10m&hourly=temperature_2m,relative_humidity_2m,precipitation,snowfall,snow_depth,pressure_msl,cloud_cover,wind_speed_10m,wind_direction_10m&wind_speed_unit=ms"
+    url = f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&start_date={today}&end_date={forecast_end}&current=temperature_2m,wind_speed_10m&hourly=temperature_2m,relative_humidity_2m,precipitation,snowfall,snow_depth,pressure_msl,cloud_cover,wind_speed_10m,wind_direction_10m&wind_speed_unit=ms"
     
     response = requests.get(url)
     if response.status_code == 200:
@@ -232,5 +232,4 @@ def create_input_sequences_for_prediction(df, seq_length=24):
 
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 10000))
-    app.run(host="0.0.0.0", port=port)
+    app.run(host="0.0.0.0", port=5000)
